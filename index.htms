@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f4f0; font-family: Arial, Helvetica, sans-serif; padding: 32px; }
+
+  h1 { font-family: Georgia, serif; font-size: 28px; font-weight: 900; color: #0d1b3e; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #888; margin-bottom: 24px; }
+
+  .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  .summary-card { background: #fff; border-radius: 4px; border: 1px solid #e0ddd8; padding: 14px 16px; text-align: center; }
+  .summary-value { font-family: 'Barlow', sans-serif; font-size: 28px; font-weight: 900; color: #0d1b3e; }
+  .summary-label { font-size: 10px; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .summary-card.danger .summary-value { color: #a32d2d; }
+  .summary-card.success .summary-value { color: #2e7d32; }
+  .summary-card.warning .summary-value { color: #e65100; }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #444; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  .filter-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid #c0bbb2; background: #fff; color: #444; cursor: pointer;
+  }
+  .filter-btn.active { background: #0d1b3e; color: #fff; border-color: #0d1b3e; }
+  .filter-btn:hover { background: #e8a0aa; color: #0d1b3e; border-color: #e8a0aa; }
+
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff;
+    background: #0d1b3e; padding: 8px 16px; border-radius: 2px; margin-bottom: 8px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    background: #eceae4; color: #0d1b3e; font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 8px 12px; text-align: left; border-bottom: 2px solid #d9d0c8;
+  }
+  td { padding: 9px 12px; border-bottom: 1px solid #e8e4df; color: #333; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #faf9f7; }
+
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 700; white-space: nowrap;
+  }
+  .badge-overdue { background: #fde8e8; color: #a32d2d; }
+  .badge-m1 { background: #e8f0fd; color: #1a3a7a; }
+  .badge-m2 { background: #e8f4fd; color: #0d5a8a; }
+  .badge-m3 { background: #f0e8fd; color: #5a1a8a; }
+  .badge-completed { background: #e8f5e9; color: #2e7d32; }
+  .badge-paused { background: #fff3e0; color: #e65100; }
+  .badge-notstarted { background: #eceae4; color: #666; }
+  .badge-ontrack { background: #e8f5e9; color: #2e7d32; }
+
+  .days-overdue { font-size: 10px; color: #a32d2d; font-weight: 600; }
+  .days-ok { font-size: 10px; color: #2e7d32; font-weight: 600; }
+  .days-left { font-size: 10px; color: #888; }
+
+  .name-cell { font-weight: 600; color: #0d1b3e; }
+
+  .progress-wrap { background: #eceae4; border-radius: 10px; height: 6px; width: 80px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .progress-fill { height: 100%; border-radius: 10px; background: #0d1b3e; }
+  .progress-fill.overdue { background: #a32d2d; }
+  .progress-fill.done { background: #2e7d32; }
+  .progress-text { font-size: 10px; color: #666; vertical-align: middle; }
+
+  .update-badge {
+    display: inline-block; background: #e8a0aa; color: #0d1b3e;
+    font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Onboarding Overview 2026</h1>
+<p class="subtitle">Weekly update · TOM: Gailan Hart & Beata Rusin-Siwiecka · Updated: March 2026</p>
+
+<div class="summary-row">
+  <div class="summary-card danger">
+    <div class="summary-value">17</div>
+    <div class="summary-label">Overdue</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-value">7</div>
+    <div class="summary-label">On Track</div>
+  </div>
+  <div class="summary-card warning">
+    <div class="summary-value">1</div>
+    <div class="summary-label">Paused</div>
+  </div>
+  <div class="summary-card success">
+    <div class="summary-value">2</div>
+    <div class="summary-label">Launched</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-value">27</div>
+    <div class="summary-label">Total Projects</div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot" style="background:#a32d2d"></div> Overdue</div>
+  <div class="legend-item"><div class="dot" style="background:#1a3a7a"></div> M1: PDR/Planning</div>
+  <div class="legend-item"><div class="dot" style="background:#0d5a8a"></div> M2: Implementation</div>
+  <div class="legend-item"><div class="dot" style="background:#5a1a8a"></div> M3: UAT/Delivered</div>
+  <div class="legend-item"><div class="dot" style="background:#2e7d32"></div> On Track / Completed</div>
+  <div class="legend-item"><div class="dot" style="background:#e65100"></div> Paused</div>
+  <div class="legend-item"><div class="dot" style="background:#e8a0aa"></div> New This Week</div>
+</div>
+
+<div class="filter-row">
+  <button class="filter-btn active" onclick="filterRows('all', this)">All</button>
+  <button class="filter-btn" onclick="filterRows('overdue', this)">🔴 Overdue</button>
+  <button class="filter-btn" onclick="filterRows('m1', this)">M1</button>
+  <button class="filter-btn" onclick="filterRows('m2', this)">M2</button>
+  <button class="filter-btn" onclick="filterRows('m3', this)">M3</button>
+  <button class="filter-btn" onclick="filterRows('ontrack', this)">✅ On Track</button>
+  <button class="filter-btn" onclick="filterRows('new', this)">🆕 New</button>
+</div>
+
+<!-- UPCOMING -->
+<div class="section">
+  <div class="section-title">📅 Upcoming Customers (1)</div>
+  <table>
+    <thead><tr><th>Customer</th><th>Phase</th><th>Contract Start</th><th>Expected Launch</th><th>TOM</th><th>CSM</th><th>Progress</th><th>Status</th><th>Timeline</th></tr></thead>
+    <tbody>
+      <tr data-tags="notstarted">
+        <td class="name-cell">Auction Edge</td>
+        <td><span class="badge badge-notstarted">Not Started</span></td>
+        <td>2026-01-31</td><td>—</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:0%"></div></div><span class="progress-text">0%</span></td>
+        <td>—</td><td><span class="days-left">Pending</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ACTIVE -->
+<div class="section">
+  <div class="section-title">🚀 Active Onboarding Customers (26)</div>
+  <table>
+    <thead><tr><th>Customer</th><th>Phase</th><th>Contract Start</th><th>Expected Launch</th><th>TOM</th><th>CSM</th><th>Progress</th><th>Status</th><th>Timeline</th></tr></thead>
+    <tbody>
+      <tr data-tags="m2 ontrack">
+        <td class="name-cell">Malibu C</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-12-31</td><td>2026-04-06</td><td>Gailan Hart</td><td>Michelle Sumner</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">9.6 days left</span></td>
+      </tr>
+      <tr data-tags="m1 overdue">
+        <td class="name-cell">Accuquilt</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2025-12-29</td><td>2026-03-17</td><td>Gailan Hart</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 10.4 days</span></td>
+      </tr>
+      <tr data-tags="m1 overdue">
+        <td class="name-cell">All Star PT</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2025-12-30</td><td>2026-03-16</td><td>Gailan Hart, Beata R-S</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 11.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 ontrack">
+        <td class="name-cell">Murray's Cheese</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-12-31</td><td>2026-07-16</td><td>Gailan Hart</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">110.6 days left</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Starkford</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2026-01-30</td><td>2026-03-20</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 7.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 ontrack">
+        <td class="name-cell">Kroll International</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2026-02-23</td><td>2026-06-01</td><td>Gailan Hart</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">65.6 days left</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Cremeria Italiana US</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-09-30</td><td>2025-12-01</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 116.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Cremeria Italiana UK</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-09-30</td><td>2025-12-01</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 116.4 days</span></td>
+      </tr>
+      <tr data-tags="m3 overdue">
+        <td class="name-cell">IPSY</td>
+        <td><span class="badge badge-m3">M3: UAT/Delivered</span></td>
+        <td>2025-06-30</td><td>2025-11-20</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:75%"></div></div><span class="progress-text">75%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 127.4 days</span></td>
+      </tr>
+      <tr data-tags="m1 overdue paused">
+        <td class="name-cell">Office Depot (ODP)</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2025-02-28</td><td>2025-10-31</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-paused">Paused</span></td>
+        <td><span class="days-overdue">LATE: 147.4 days</span></td>
+      </tr>
+      <tr data-tags="m1 overdue">
+        <td class="name-cell">MAHLE</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2025-07-30</td><td>2026-02-02</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 53.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Pet Care - Al Ghurair</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2024-09-10</td><td>2025-10-31</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 147.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Masafi - Al Ghurair</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2024-09-10</td><td>2025-12-30</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 87.4 days</span></td>
+      </tr>
+      <tr data-tags="m1 overdue">
+        <td class="name-cell">Worldwide Golf Shops</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2024-02-01</td><td>2026-01-01</td><td>Gailan Hart</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 85.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Brook Mays Music Co.</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-03-28</td><td>2025-08-01</td><td>Gailan Hart</td><td>Marcus Benavidez</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 238.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Gtechniq LTD US</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-07-29</td><td>2026-01-05</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 81.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Gtechniq LTD UK</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-07-29</td><td>2026-01-05</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 81.4 days</span></td>
+      </tr>
+      <tr data-tags="m3 overdue">
+        <td class="name-cell">Zippy</td>
+        <td><span class="badge badge-m3">M3: UAT/Delivered</span></td>
+        <td>2025-08-29</td><td>2026-01-01</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:75%"></div></div><span class="progress-text">75%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 85.4 days</span></td>
+      </tr>
+      <tr data-tags="notstarted">
+        <td class="name-cell">TC Boxes</td>
+        <td><span class="badge badge-notstarted">Not Started</span></td>
+        <td>2025-03-03</td><td>—</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:0%"></div></div><span class="progress-text">0%</span></td>
+        <td>—</td><td><span class="days-left">Pending</span></td>
+      </tr>
+      <tr data-tags="m3 overdue">
+        <td class="name-cell">Akzonobel</td>
+        <td><span class="badge badge-m3">M3: UAT/Delivered</span></td>
+        <td>2025-06-20</td><td>2025-11-20</td><td>Gailan Hart, Beata R-S</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:75%"></div></div><span class="progress-text">75%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 127.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Colibri - McKissock</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2024-12-31</td><td>2025-06-02</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 298.4 days</span></td>
+      </tr>
+      <tr data-tags="m2 ontrack">
+        <td class="name-cell">Rakić LTD</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-06-02</td><td>2026-08-14</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">139.6 days left</span></td>
+      </tr>
+      <tr data-tags="m2 overdue">
+        <td class="name-cell">Urban Tactical</td>
+        <td><span class="badge badge-m2">M2: Implementation</span></td>
+        <td>2025-10-31</td><td>2026-03-16</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill overdue" style="width:50%"></div></div><span class="progress-text">50%</span></td>
+        <td><span class="badge badge-overdue">Overdue</span></td>
+        <td><span class="days-overdue">LATE: 11.4 days</span></td>
+      </tr>
+      <tr data-tags="m1 ontrack">
+        <td class="name-cell">Lotus Plant Power</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2026-02-28</td><td>—</td><td>Gailan Hart</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">In Progress</span></td>
+      </tr>
+      <tr data-tags="m1 ontrack">
+        <td class="name-cell">Powerflex</td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2026-02-28</td><td>2026-08-04</td><td>Gailan Hart</td><td>Michelle Sumner</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">129.6 days left</span></td>
+      </tr>
+      <tr data-tags="m1 ontrack new">
+        <td class="name-cell">Megabus <span class="update-badge">NEW</span></td>
+        <td><span class="badge badge-m1">M1: PDR/Planning</span></td>
+        <td>2026-03-20</td><td>2026-05-26</td><td>Beata Rusin-Siwiecka</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill" style="width:25%"></div></div><span class="progress-text">25%</span></td>
+        <td><span class="badge badge-ontrack">On Track</span></td>
+        <td><span class="days-ok">59.6 days left</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- LAUNCHED -->
+<div class="section">
+  <div class="section-title">✅ Launched Programs (2)</div>
+  <table>
+    <thead><tr><th>Customer</th><th>Phase</th><th>Contract Start</th><th>Expected Launch</th><th>TOM</th><th>CSM</th><th>Progress</th><th>Status</th><th>Timeline</th></tr></thead>
+    <tbody>
+      <tr data-tags="completed">
+        <td class="name-cell">Project Papa</td>
+        <td><span class="badge badge-completed">Completed</span></td>
+        <td>—</td><td>—</td><td>—</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill done" style="width:100%"></div></div><span class="progress-text">100%</span></td>
+        <td><span class="badge badge-completed">Launched</span></td>
+        <td><span class="days-ok">Done</span></td>
+      </tr>
+      <tr data-tags="completed">
+        <td class="name-cell">Project Mano Vino</td>
+        <td><span class="badge badge-completed">Completed</span></td>
+        <td>—</td><td>—</td><td>—</td><td>—</td>
+        <td><div class="progress-wrap"><div class="progress-fill done" style="width:100%"></div></div><span class="progress-text">100%</span></td>
+        <td><span class="badge badge-completed">Launched</span></td>
+        <td><span class="days-ok">Done</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function filterRows(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('tbody tr').forEach(row => {
+    if (tag === 'all') { row.style.display = ''; }
+    else {
+      var tags = row.getAttribute('data-tags') || '';
+      row.style.display = tags.includes(tag) ? '' : 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
